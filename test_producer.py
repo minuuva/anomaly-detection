@@ -6,7 +6,7 @@ import random
 import boto3
 import pandas as pd
 import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 import os
 
 s3 = boto3.client("s3")
@@ -14,7 +14,7 @@ BUCKET_NAME = os.environ["BUCKET_NAME"]
 
 
 def generate_batch(n_rows: int = 100, inject_anomalies: bool = True) -> pd.DataFrame:
-    base_time = datetime.utcnow()
+    base_time = datetime.now(UTC) # fixing the deprecation warning
 
     data = {
         "timestamp": [
@@ -41,7 +41,7 @@ def generate_batch(n_rows: int = 100, inject_anomalies: bool = True) -> pd.DataF
 
 
 def upload_batch(df: pd.DataFrame):
-    timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%S")
+    timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S") # fixing the deprecation warning
     key = f"raw/sensors_{timestamp}.csv"
 
     csv_buffer = io.StringIO()
